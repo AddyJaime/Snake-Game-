@@ -13,7 +13,7 @@ int main()
   SetTargetFPS(60);
 
   // main game loop
-  while (!WindowShouldClose())
+  while (!WindowShouldClose)
   {
     BeginDrawing();
     ClearBackground(BLACK);
