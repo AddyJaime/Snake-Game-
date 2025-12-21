@@ -1,30 +1,33 @@
+git add .
+git commit -m "Initial commit: add README and .gitignore"
+
 # Snake Game 🐍
 
-Pequeño proyecto de juego tipo Snake escrito en C++ usando Raylib.
+Small Snake-style game project written in C++ using Raylib.
 
-## Descripción
+## Description
 
-Este es un proyecto simple para experimentar con Raylib y lógica de juegos básicos. El ejecutable generado se llama `app` y el código fuente principal está en `src/main.cpp`.
+This is a simple project to experiment with Raylib and basic game logic. The generated executable is named `app` and the main source file is `src/main.cpp`.
 
-⚙️ Compilador: `clang++` (estoy usando `clang++` para compilar en macOS).
+⚙️ Compiler: `clang++` (this project uses `clang++` on macOS).
 
-## Dependencias
+## Dependencies
 
 - clang++ (C++17)
-- raylib (biblioteca gráfica)
+- raylib (graphics library)
 - macOS frameworks: OpenGL, Cocoa, IOKit, CoreVideo
 
-## Compilar (ejemplo)
+## Build (example)
 
-Puedes compilar con el siguiente comando (ya incluido como tarea en el proyecto):
+You can build the project with the following command (also included as a task in the project):
 
 ```bash
 clang++ src/main.cpp -o app -std=c++17 -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 ```
 
-## Ejecutar
+## Run
 
-Después de compilar:
+After building:
 
 ```bash
 ./app
@@ -32,9 +35,9 @@ Después de compilar:
 
 ## Git
 
-Este repositorio incluye un `.gitignore` que omite binarios y archivos temporales (por ejemplo, `app`).
+This repository includes a `.gitignore` that excludes binaries and temporary files (for example, `app`).
 
-Comandos básicos para iniciar con Git (si aún no lo hiciste):
+Basic Git commands to get started (if you haven't already):
 
 ```bash
 git init
@@ -42,9 +45,9 @@ git add .
 git commit -m "Initial commit: add README and .gitignore"
 ```
 
-## Notas
+## Notes
 
-- El `.gitignore` ya tiene entradas comunes (binarios, archivos de IDE, archivos locales y secretos).
-- Si necesitas que añada un archivo de build (Makefile / CMake) o instrucciones más detalladas, dime y lo agrego.
+- The `.gitignore` already contains common entries (binaries, editor/IDE files, local config, and secrets).
+- If you'd like, I can add a build file (Makefile / CMake) or more detailed instructions—just tell me which you prefer.
 
-¡Disfruta programando! ✅
+Enjoy coding! ✅
