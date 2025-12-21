@@ -1,0 +1,36 @@
+# Ignorar binarios y artefactos de compilación
+app
+/build/
+bin/
+*.o
+*.obj
+*.out
+*.exe
+*.dSYM/
+*.dylib
+*.so
+*.a
+*.lib
+
+# Archivos de IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Archivos de configuración local y secretos
+.env
+.env.local
+local_settings.json
+secret.key
+
+# Archivos temporales / logs
+*.log
+*.tmp
+
+# Otros
+coverage/
+*.bak
