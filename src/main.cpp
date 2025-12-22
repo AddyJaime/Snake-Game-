@@ -4,23 +4,77 @@ using namespace std;
 
 int main()
 {
-  // Window  initialization
-  const int screen_width = 750;
-  const int screen_height = 750;
-  InitWindow(screen_width, screen_height, "Snake_Game");
-  
-  // set the target frame rate
-  SetTargetFPS(60);
+    // -------------------------------------------------
+    // CONCEPTO CLAVE:
+    // En este juego usamos un GRID.
+    // Para dibujar en pantalla, convertimos:
+    // Celda × tamaño_de_celda = píxeles
+    // -------------------------------------------------
 
-  // main game loop
-  while (!WindowShouldClose)
-  {
-    BeginDrawing();
-    ClearBackground(BLACK);
-    EndDrawing();
-  }
+    // Un struct se usa para agrupar valores relacionados.
+    // En este caso, representa una posición (x, y) en el grid.
+    struct Coordenadas
+    {
+        int x = 3; // posición horizontal en celdas
+        int y = 4; // posición vertical en celdas
+    };
 
-  CloseWindow();
-  return 0;
+    // Estos valores definen las reglas del mundo del juego.
+    // NO son píxeles directamente.
+    int tamano_de_celda = 25;      // tamaño de cada celda en píxeles
+    int cantidad_de_celdas = 30;   // cuántas celdas hay en ancho y alto
 
+    // Creamos una instancia del struct.
+    // Esta variable representa la posición actual del snake en el grid.
+    Coordenadas snake_posicion;
+
+    // Convertimos la posición del snake de celdas a píxeles.
+    // Raylib dibuja usando píxeles, no celdas.
+    int posicionX = snake_posicion.x * tamano_de_celda;
+    int posicionY = snake_posicion.y * tamano_de_celda;
+
+    // -------------------------------------------------
+    // Inicialización de la ventana
+    // El tamaño de la ventana depende del grid
+    // -------------------------------------------------
+    InitWindow(
+        tamano_de_celda * cantidad_de_celdas,
+        tamano_de_celda * cantidad_de_celdas,
+        "Snake Game"
+    );
+
+    // Definimos cuántos frames por segundo tendrá el juego
+    SetTargetFPS(60);
+
+    // -------------------------------------------------
+    // Bucle principal del juego
+    // Mientras la ventana esté abierta, el juego sigue vivo
+    // -------------------------------------------------
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+
+        // Limpiamos la pantalla antes de dibujar
+        ClearBackground(WHITE);
+
+        // Dibujamos el snake como un cuadrito.
+        // Por ahora:
+        // - no se mueve
+        // - no crece
+        // - solo representa una celda del grid
+        DrawRectangle(
+            posicionX,
+            posicionY,
+            tamano_de_celda,
+            tamano_de_celda,
+            RED
+        );
+
+        EndDrawing();
+    }
+
+    // Cerramos la ventana y liberamos recursos
+    CloseWindow();
+
+    return 0;
 }
