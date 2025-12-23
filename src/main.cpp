@@ -5,7 +5,7 @@ using namespace std;
 int main()
 {
     // -------------------------------------------------
-    // CONCEPTO CLAVE:
+    // CONCEPTO A RECORDAR:
     // En este juego usamos un GRID.
     // Para dibujar en pantalla, convertimos:
     // Celda × tamaño_de_celda = píxeles
