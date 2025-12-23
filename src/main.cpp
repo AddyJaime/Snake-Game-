@@ -17,6 +17,8 @@ int main()
     {
         int x = 3; // posición horizontal en celdas
         int y = 4; // posición vertical en celdas
+        int snake_pos_x = 6;
+        int snake_pos_y = 4;
     };
 
     // Estos valores definen las reglas del mundo del juego.
@@ -26,12 +28,16 @@ int main()
 
     // Creamos una instancia del struct.
     // Esta variable representa la posición actual del snake en el grid.
-    Coordenadas snake_posicion;
+    Coordenadas snake_posicion, snake_food_position;
 
     // Convertimos la posición del snake de celdas a píxeles.
     // Raylib dibuja usando píxeles, no celdas.
     int posicionX = snake_posicion.x * tamano_de_celda;
     int posicionY = snake_posicion.y * tamano_de_celda;
+
+    // aqui convertimos la poscion de la comida de celsas a pixes 
+    int snake_food_position_x = snake_food_position.snake_pos_x * tamano_de_celda;
+    int snake_food_postion_y = snake_food_position.snake_pos_y * tamano_de_celda;
 
     // -------------------------------------------------
     // Inicialización de la ventana
@@ -68,6 +74,14 @@ int main()
             tamano_de_celda,
             tamano_de_celda,
             RED
+        );
+
+        DrawRectangle(
+            snake_food_position_x,
+            snake_food_postion_y,
+            tamano_de_celda,
+            tamano_de_celda,
+            GREEN
         );
 
         EndDrawing();
