@@ -2,6 +2,18 @@
 #include <raylib.h>
 using namespace std;
 
+
+// Un enum se utiliza para representar opciones fijas
+// para no usar numeros raros
+enum Direccion 
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+};
+
+
 int main()
 {
     // -------------------------------------------------
@@ -17,8 +29,8 @@ int main()
     {
         int x = 3; // posición horizontal en celdas
         int y = 4; // posición vertical en celdas
-        int snake_pos_x = 6;
-        int snake_pos_y = 4;
+        int snake_pos_x = 6; //posicion de la comida
+        int snake_pos_y = 4; //posicion de la comida
     };
 
     // Estos valores definen las reglas del mundo del juego.
@@ -61,7 +73,7 @@ int main()
         BeginDrawing();
 
         // Limpiamos la pantalla antes de dibujar
-        ClearBackground(WHITE);
+        ClearBackground(BLACK);
 
         // Dibujamos el snake como un cuadrito.
         // Por ahora:
