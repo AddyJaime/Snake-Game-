@@ -77,24 +77,61 @@ int main()
     // -------------------------------------------------
     while (!WindowShouldClose())
     {
+
+          // ==============================
+    // 1️⃣ INPUT (TECLADO) – SIEMPRE
+    // ==============================
           
+           if (IsKeyDown(KEY_RIGHT) && direccion != LEFT )
+        {
+            direccion = RIGHT;
+        }
+        else if (IsKeyDown(KEY_LEFT) && direccion != RIGHT)
+        {
+            direccion = LEFT;
+        }
+        else if (IsKeyDown(KEY_UP) && direccion != DOWN)
+        {
+            direccion = UP;
+        }
+        else if (IsKeyDown(KEY_DOWN) && direccion != UP)
+        {
+            direccion = DOWN;
+
+        }
+
+      // ==============================
+    // 2️⃣ TIEMPO (MOVIMIENTO)
+    // ==============================
+
         // hora actual
         double current_time = GetTime();
         // tiempo actual − último movimiento = Si ese tiempo que pasó es mayor o igual al tiempo que queremos esperar (por ejemplo 0.5 segundos), entonces el snake se puede mover
        if (current_time - last_move_time >= move_delay)
        {
-        if (direccion == RIGHT)
-        {
-            posicionX += 1;
-        }
-
-        // esto va actualizando o recording la ultima vez que el snake se movio /actualizamos la variable del último movimiento con el tiempo actual para volver a empezar a contar
-        last_move_time = current_time;
-        
-       }
-       
+    
+           if (direccion == RIGHT)
+           {
+             posicionX = posicionX + tamano_de_celda;
+           }
+           else if (direccion == LEFT)
+           {
+            posicionX = posicionX - tamano_de_celda;
+           }
+           else if (direccion == UP)
+           {
+            posicionY = posicionY + tamano_de_celda;
+           }
+           else if (direccion == DOWN)
+           {
+            posicionY = posicionY - tamano_de_celda; 
+           }
            
-         
+        // esto va actualizando o recording la ultima vez que el snake se movio /actualizamos la variable del último movimiento con el tiempo actual para volver a empezar a contar
+        
+        last_move_time = current_time;
+    }
+    
 
         BeginDrawing();
 
