@@ -22,7 +22,6 @@ int main()
     // Para dibujar en pantalla, convertimos:
     // Celda × tamaño_de_celda = píxeles
     // -------------------------------------------------
-
     // Un struct se usa para agrupar valores relacionados.
     // En este caso, representa una posición (x, y) en el grid.
     struct Coordenadas
@@ -47,6 +46,13 @@ int main()
     int posicionX = snake_posicion.x * tamano_de_celda;
     int posicionY = snake_posicion.y * tamano_de_celda;
 
+    // Direcciones
+    Direccion direccion = RIGHT;
+
+    // Tiempo
+    double last_move_time = GetTime();//guardamos el último tiempo
+     double move_delay = 0.5;// cuanto tiempo quiero esperar entre movimiento
+
     // aqui convertimos la poscion de la comida de celsas a pixes 
     int snake_food_position_x = snake_food_position.snake_pos_x * tamano_de_celda;
     int snake_food_postion_y = snake_food_position.snake_pos_y * tamano_de_celda;
@@ -67,10 +73,32 @@ int main()
     // -------------------------------------------------
     // Bucle principal del juego
     // Mientras la ventana esté abierta, el juego sigue vivo
+    // mientras el juego este abierto
     // -------------------------------------------------
     while (!WindowShouldClose())
     {
+          
+        // hora actual
+        double current_time = GetTime();
+        // tiempo actual − último movimiento = Si ese tiempo que pasó es mayor o igual al tiempo que queremos esperar (por ejemplo 0.5 segundos), entonces el snake se puede mover
+       if (current_time - last_move_time >= move_delay)
+       {
+        if (direccion == RIGHT)
+        {
+            posicionX += 1;
+        }
+
+        // esto va actualizando o recording la ultima vez que el snake se movio /actualizamos la variable del último movimiento con el tiempo actual para volver a empezar a contar
+        last_move_time = current_time;
+        
+       }
+       
+           
+         
+
         BeginDrawing();
+
+    
 
         // Limpiamos la pantalla antes de dibujar
         ClearBackground(BLACK);
