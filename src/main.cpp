@@ -1,4 +1,7 @@
 #include <raylib.h>
+#include <iostream>
+
+using namespace std;
 
 // =================================================
 // ENUM: Direcciones posibles del Snake
@@ -19,6 +22,13 @@ struct Coordenadas
     int x;
     int y;
 };
+
+struct  Coordenada_Comida
+{
+    int comida_posicion_x;
+    int comida_posicion_y;
+};
+
 
 int main()
 {
@@ -44,6 +54,8 @@ int main()
     // =================================================
     Coordenadas snake = {3, 4};   // posición inicial en el grid
     Direccion direccion = RIGHT; // dirección inicial
+
+    Coordenada_Comida comida = {5,7};
 
     // =================================================
     // CONTROL DE TIEMPO (MOVIMIENTO POR TICKS)
@@ -91,6 +103,13 @@ int main()
             // sin esta linea no vamso a poder saber cual fue el ultimo movimiento que anotamos 
             ultimoMovimiento = tiempoActual;
         }
+        
+              if (snake.x < 0 || snake.x >= CANTIDAD_CELDAS || snake.y < 0 || snake.y >= CANTIDAD_CELDAS)
+        {
+            cout << "El snake se salio del grid" << "\n";
+            break;
+        }
+         
 
         // =============================================
         // 3️⃣ CONVERSIÓN A PÍXELES (SOLO PARA DIBUJAR)
@@ -101,6 +120,9 @@ int main()
         // =============================================
         int pixelX = snake.x * TAMANO_CELDA;
         int pixelY = snake.y * TAMANO_CELDA;
+
+        int pixel_comida_x = comida.comida_posicion_x * TAMANO_CELDA;
+        int pixel_comida_y = comida.comida_posicion_y * TAMANO_CELDA;
 
         // =============================================
         // 4️⃣ DIBUJO
@@ -115,6 +137,15 @@ int main()
             TAMANO_CELDA,
             TAMANO_CELDA,
             RED
+        );
+
+        DrawRectangle(
+            pixel_comida_x,
+            pixel_comida_y ,
+            TAMANO_CELDA,
+            TAMANO_CELDA,
+            GREEN
+            
         );
 
         EndDrawing();
