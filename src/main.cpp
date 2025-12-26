@@ -1,171 +1,128 @@
-#include <iostream>
 #include <raylib.h>
-using namespace std;
 
-
-// Un enum se utiliza para representar opciones fijas
-// para no usar numeros raros
-enum Direccion 
+// =================================================
+// ENUM: Direcciones posibles del Snake
+// =================================================
+enum Direccion
 {
     UP,
     DOWN,
     LEFT,
-    RIGHT,
+    RIGHT
 };
 
+// =================================================
+// STRUCT: Coordenadas en CELDAS (lógica del juego)
+// =================================================
+struct Coordenadas
+{
+    int x;
+    int y;
+};
 
 int main()
 {
-    // -------------------------------------------------
-    // CONCEPTO A RECORDAR:
-    // En este juego usamos un GRID.
-    // Para dibujar en pantalla, convertimos:
-    // Celda × tamaño_de_celda = píxeles
-    // -------------------------------------------------
-    // Un struct se usa para agrupar valores relacionados.
-    // En este caso, representa una posición (x, y) en el grid.
-    struct Coordenadas
-    {
-        int x = 3; // posición horizontal en celdas
-        int y = 4; // posición vertical en celdas
-        int snake_pos_x = 6; //posicion de la comida
-        int snake_pos_y = 4; //posicion de la comida
-    };
+    // =================================================
+    // CONFIGURACIÓN DEL GRID (REGLAS DEL MUNDO)
+    // =================================================
+    const int TAMANO_CELDA = 25;      // 1 celda = 25 píxeles
+    const int CANTIDAD_CELDAS = 30;   // grid 30x30
 
-    // Estos valores definen las reglas del mundo del juego.
-    // NO son píxeles directamente.
-    int tamano_de_celda = 25;      // tamaño de cada celda en píxeles
-    int cantidad_de_celdas = 30;   // cuántas celdas hay en ancho y alto
-
-    // Creamos una instancia del struct.
-    // Esta variable representa la posición actual del snake en el grid.
-    Coordenadas snake_posicion, snake_food_position;
-
-    // Convertimos la posición del snake de celdas a píxeles.
-    // Raylib dibuja usando píxeles, no celdas.
-    int posicionX = snake_posicion.x * tamano_de_celda;
-    int posicionY = snake_posicion.y * tamano_de_celda;
-
-    // Direcciones
-    Direccion direccion = RIGHT;
-
-    // Tiempo
-    double last_move_time = GetTime();//guardamos el último tiempo
-     double move_delay = 0.5;// cuanto tiempo quiero esperar entre movimiento
-
-    // aqui convertimos la poscion de la comida de celsas a pixes 
-    int snake_food_position_x = snake_food_position.snake_pos_x * tamano_de_celda;
-    int snake_food_postion_y = snake_food_position.snake_pos_y * tamano_de_celda;
-
-    // -------------------------------------------------
-    // Inicialización de la ventana
-    // El tamaño de la ventana depende del grid
-    // -------------------------------------------------
+    // =================================================
+    // INICIALIZACIÓN DE LA VENTANA
+    // =================================================
     InitWindow(
-        tamano_de_celda * cantidad_de_celdas,
-        tamano_de_celda * cantidad_de_celdas,
-        "Snake Game"
+        TAMANO_CELDA * CANTIDAD_CELDAS,
+        TAMANO_CELDA * CANTIDAD_CELDAS,
+        "Snake Game - Grid Correcto"
     );
 
-    // Definimos cuántos frames por segundo tendrá el juego
     SetTargetFPS(60);
 
-    // -------------------------------------------------
-    // Bucle principal del juego
-    // Mientras la ventana esté abierta, el juego sigue vivo
-    // mientras el juego este abierto
-    // -------------------------------------------------
+    // =================================================
+    // ESTADO INICIAL DEL SNAKE (CELDAS, NO PÍXELES)
+    // =================================================
+    Coordenadas snake = {3, 4};   // posición inicial en el grid
+    Direccion direccion = RIGHT; // dirección inicial
+
+    // =================================================
+    // CONTROL DE TIEMPO (MOVIMIENTO POR TICKS)
+    // =================================================
+    double ultimoMovimiento = GetTime(); // última vez que se movió
+    double delayMovimiento = 0.5;        // cada cuántos segundos se mueve
+
+    // =================================================
+    // GAME LOOP PRINCIPAL
+    // =================================================
     while (!WindowShouldClose())
     {
-
-          // ==============================
-    // 1️⃣ INPUT (TECLADO) – SIEMPRE
-    // ==============================
-          
-           if (IsKeyDown(KEY_RIGHT) && direccion != LEFT )
-        {
+        // =============================================
+        // 1️⃣ INPUT (CAMBIAR DIRECCIÓN)
+        // =============================================
+        if (IsKeyDown(KEY_RIGHT) && direccion != LEFT)
             direccion = RIGHT;
-        }
         else if (IsKeyDown(KEY_LEFT) && direccion != RIGHT)
-        {
             direccion = LEFT;
-        }
         else if (IsKeyDown(KEY_UP) && direccion != DOWN)
-        {
             direccion = UP;
-        }
         else if (IsKeyDown(KEY_DOWN) && direccion != UP)
-        {
             direccion = DOWN;
 
+        // =============================================
+        // 2️⃣ TIEMPO + MOVIMIENTO (SOLO CELDAS)
+        // =============================================
+        double tiempoActual = GetTime();
+
+        // ¿Ya pasó suficiente tiempo para moverse?
+        if (tiempoActual - ultimoMovimiento >= delayMovimiento)
+        {
+            // Mover UNA celda según la dirección
+            if (direccion == RIGHT)
+            // de la posicion inical donde esta pasa un cuadrito a la vez o muevete un cuadrito a la vez
+                snake.x += 1;
+            else if (direccion == LEFT)
+                snake.x -= 1;
+            else if (direccion == UP)
+                snake.y -= 1;
+            else if (direccion == DOWN)
+                snake.y += 1;
+
+            // Guardamos cuándo fue el último movimiento
+            // sin esta linea no vamso a poder saber cual fue el ultimo movimiento que anotamos 
+            ultimoMovimiento = tiempoActual;
         }
 
-      // ==============================
-    // 2️⃣ TIEMPO (MOVIMIENTO)
-    // ==============================
+        // =============================================
+        // 3️⃣ CONVERSIÓN A PÍXELES (SOLO PARA DIBUJAR)
+            // La pantalla NO entiende celdas
+            // La pantalla SOLO entiende píxeles
+            // por esa razon aqui se toma la poscion d eesa celda y se multiplica por el tamono y asi nos da la posicion 
+            // en pantallad del cuadirto que es pixles 
+        // =============================================
+        int pixelX = snake.x * TAMANO_CELDA;
+        int pixelY = snake.y * TAMANO_CELDA;
 
-        // hora actual
-        double current_time = GetTime();
-        // tiempo actual − último movimiento = Si ese tiempo que pasó es mayor o igual al tiempo que queremos esperar (por ejemplo 0.5 segundos), entonces el snake se puede mover
-       if (current_time - last_move_time >= move_delay)
-       {
-    
-           if (direccion == RIGHT)
-           {
-             posicionX = posicionX + tamano_de_celda;
-           }
-           else if (direccion == LEFT)
-           {
-            posicionX = posicionX - tamano_de_celda;
-           }
-           else if (direccion == UP)
-           {
-            posicionY = posicionY + tamano_de_celda;
-           }
-           else if (direccion == DOWN)
-           {
-            posicionY = posicionY - tamano_de_celda; 
-           }
-           
-        // esto va actualizando o recording la ultima vez que el snake se movio /actualizamos la variable del último movimiento con el tiempo actual para volver a empezar a contar
-        
-        last_move_time = current_time;
-    }
-    
-
+        // =============================================
+        // 4️⃣ DIBUJO
+        // =============================================
         BeginDrawing();
-
-    
-
-        // Limpiamos la pantalla antes de dibujar
         ClearBackground(BLACK);
 
-        // Dibujamos el snake como un cuadrito.
-        // Por ahora:
-        // - no se mueve
-        // - no crece
-        // - solo representa una celda del grid
+        // Dibujamos el snake
         DrawRectangle(
-            posicionX,
-            posicionY,
-            tamano_de_celda,
-            tamano_de_celda,
+            pixelX,
+            pixelY,
+            TAMANO_CELDA,
+            TAMANO_CELDA,
             RED
-        );
-
-        DrawRectangle(
-            snake_food_position_x,
-            snake_food_postion_y,
-            tamano_de_celda,
-            tamano_de_celda,
-            GREEN
         );
 
         EndDrawing();
     }
 
-    // Cerramos la ventana y liberamos recursos
+    // =================================================
+    // CERRAR JUEGO
+    // =================================================
     CloseWindow();
-
     return 0;
 }
