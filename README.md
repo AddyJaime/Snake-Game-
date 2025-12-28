@@ -3,6 +3,8 @@ git commit -m "Initial commit: add README and .gitignore"
 
 # Snake Game 🐍
 
+![Gameplay screenshot](assets/screenshot.png)
+
 Small Snake-style game project written in C++ using Raylib.
 
 ## Description
