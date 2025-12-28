@@ -7,11 +7,11 @@ using namespace std;
 // =================================================
 // CONFIGURACIÓN DEL GRID
 // =================================================
-const int TAMANO_CELDA = 25;  
+const int TAMANO_CELDA = 25;
 const int CANTIDAD_CELDAS = 30;
 
 // =================================================
-// ENUM DIRECCIÓN
+// DIRECCIÓN DEL SNAKE
 // =================================================
 enum Direccion
 {
@@ -22,7 +22,7 @@ enum Direccion
 };
 
 // =================================================
-// STRUCT COORDENADAS
+// ESTRUCTURAS
 // =================================================
 struct Coordenadas
 {
@@ -30,10 +30,10 @@ struct Coordenadas
     int y;
 };
 
-struct Coordenadas_comida
+struct CoordenadasComida
 {
-    int x_comida;
-    int y_comida;
+    int x;
+    int y;
 };
 
 int main()
@@ -50,7 +50,7 @@ int main()
     SetTargetFPS(60);
 
     // =================================================
-    // SNAKE = VECTOR DE COORDENADAS
+    // SNAKE (VECTOR DE COORDENADAS)
     // =================================================
     vector<Coordenadas> snake;
 
@@ -59,61 +59,50 @@ int main()
     snake.push_back({9, 10});  // cuerpo
     snake.push_back({8, 10});  // cola
 
-
-    Coordenadas_comida comida = {4,6};
-
-    Direccion direccion = RIGHT;
+    // =================================================
+    // COMIDA
+    // =================================================
+    CoordenadasComida comida = {4, 6};
 
     // =================================================
-    // TIEMPO DE MOVIMIENTO
+    // ESTADO DEL JUEGO
+    // =================================================
+    Direccion direccion = RIGHT;
+    bool is_snake_out = false;
+
+    // =================================================
+    // CONTROL DE TIEMPO
     // =================================================
     double ultimoMovimiento = GetTime();
     double delayMovimiento = 0.3;
-
-    bool is_snake_out = false;
 
     // =================================================
     // GAME LOOP
     // =================================================
     while (!WindowShouldClose())
     {
-        // =============================================
-        // INPUT (CAMBIAR DIRECCIÓN)
-        // =============================================
-        if (IsKeyPressed(KEY_RIGHT) && direccion != LEFT)
-            direccion = RIGHT;
-        if (IsKeyPressed(KEY_LEFT) && direccion != RIGHT)
-            direccion = LEFT;
-        if (IsKeyPressed(KEY_UP) && direccion != DOWN)
-            direccion = UP;
-        if (IsKeyPressed(KEY_DOWN) && direccion != UP)
-            direccion = DOWN;
+        // -------------------------------------------------
+        // INPUT (CAMBIO DE DIRECCIÓN)
+        // -------------------------------------------------
+        if (IsKeyPressed(KEY_RIGHT) && direccion != LEFT)  direccion = RIGHT;
+        if (IsKeyPressed(KEY_LEFT)  && direccion != RIGHT) direccion = LEFT;
+        if (IsKeyPressed(KEY_UP)    && direccion != DOWN)  direccion = UP;
+        if (IsKeyPressed(KEY_DOWN)  && direccion != UP)    direccion = DOWN;
 
-        // =============================================
-        // MOVIMIENTO POR TIEMPO
-        // =============================================
+        // -------------------------------------------------
+        // MOVIMIENTO CONTROLADO POR TIEMPO
+        // -------------------------------------------------
         double tiempoActual = GetTime();
 
         if (tiempoActual - ultimoMovimiento >= delayMovimiento && !is_snake_out)
         {
-            // -----------------------------------------
             // 1️⃣ MOVER CUERPO (DE ATRÁS HACIA ADELANTE)
-            // ESTUDIAR
-            // -----------------------------------------
-
-            // snake.size() - 1 apunta al ultimo indice que son 2
-            // int i = snake.size() - 1 aqui signica que en i vamos a inicar con el ultimo elemento que seria 2
-            // i > 0 = i siguie siendo mayor que 0, si si entra al loop 
-            // Este loop hace que cada elemento copie al que está delante, empezando por el último.
-                for (int i = snake.size() - 1; i > 0; i--)
+            for (int i = snake.size() - 1; i > 0; i--)
             {
-                // El cuadrito de atrás copia EXACTAMENTE la posición del cuadrito que está delante
                 snake[i] = snake[i - 1];
             }
 
-            // -----------------------------------------
             // 2️⃣ MOVER CABEZA
-            // -----------------------------------------
             if (direccion == RIGHT) snake[0].x += 1;
             if (direccion == LEFT)  snake[0].x -= 1;
             if (direccion == UP)    snake[0].y -= 1;
@@ -121,39 +110,31 @@ int main()
 
             ultimoMovimiento = tiempoActual;
 
-            
-          if (snake[0].x == comida.x_comida && snake[0].y == comida.y_comida)
-          {
-            int randomX = GetRandomValue(0, CANTIDAD_CELDAS - 1);
-            int randomY = GetRandomValue(0, CANTIDAD_CELDAS - 1);
-            comida.x_comida = randomX;
-            comida.y_comida  = randomY;
-          }
-          
+            // 3️⃣ COMER COMIDA
+            if (snake[0].x == comida.x && snake[0].y == comida.y)
+            {
+                comida.x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+                comida.y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
 
+                // Crecer el snake
+                snake.push_back(snake.back());
+            }
 
-            // -----------------------------------------
-            // 3️⃣ LÍMITES DEL MAPA (SOLO CABEZA)
-            // -----------------------------------------
+            // 4️⃣ LÍMITES DEL MAPA
             if (snake[0].x < 0 || snake[0].x >= CANTIDAD_CELDAS ||
                 snake[0].y < 0 || snake[0].y >= CANTIDAD_CELDAS)
             {
                 is_snake_out = true;
             }
-            
-            
-
-
         }
 
-        // =============================================
+        // -------------------------------------------------
         // DIBUJO
-        // =============================================
+        // -------------------------------------------------
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // ESTUDIAR
-        // Dibujar todo el snake
+        // Dibujar snake completo
         for (int i = 0; i < snake.size(); i++)
         {
             DrawRectangle(
@@ -161,16 +142,17 @@ int main()
                 snake[i].y * TAMANO_CELDA,
                 TAMANO_CELDA,
                 TAMANO_CELDA,
-                (i == 0) ? RED : GREEN // cabeza roja, cuerpo verde
+                (i == 0) ? RED : GREEN
             );
         }
 
+        // Dibujar comida
         DrawRectangle(
-            comida.x_comida * TAMANO_CELDA,
-            comida.y_comida * TAMANO_CELDA,
+            comida.x * TAMANO_CELDA,
+            comida.y * TAMANO_CELDA,
             TAMANO_CELDA,
             TAMANO_CELDA,
-            BLUE
+            GREEN
         );
 
         EndDrawing();
