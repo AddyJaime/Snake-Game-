@@ -1,6 +1,3 @@
-git add .
-git commit -m "Initial commit: add README and .gitignore"
-
 # Snake Game 🐍
 
 ![Gameplay screenshot](./Snake_Game.png)
