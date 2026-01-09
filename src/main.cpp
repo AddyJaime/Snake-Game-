@@ -30,11 +30,37 @@ struct Coordenadas
     int y;
 };
 
-struct CoordenadasComida
-{
-    int x;
-    int y;
+// struct CoordenadasComida
+// {
+//     int x;
+//     int y;
+// };
+
+// COLORS
+Color green = {173,204,96,255};
+Color dark_green = {43,51,24,255};
+// La  clase encapsula el acceso a sus miembros
+// Encapsular SÍ es: Decidir qué muestro y qué no”
+class Food {
+    public:
+    Vector2 position = {4,6};
+    // Texture2D viene de raylib porque c++ no sabe nada de imagen
+    // Raylib es la que le enseña a C++ a dibujar cosas.
+    // texture2d es una imagen que ya fue enviada a la GPU
+    Texture2D texture;
+
+    // Constructor
+    Food(){
+        // “Abre el archivo y ponlo en RAM”
+        Image image = LoadImage("assets/16_burger_dish.png");
+        // “Cópialo a la GPU para poder dibujarlo”
+        texture = LoadTextureFromImage(image);
+    }
+    void Draw(){
+        DrawRectangle(position.x * TAMANO_CELDA, position.y * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA, dark_green);
+    }
 };
+
 
 int main()
 {
@@ -49,6 +75,9 @@ int main()
 
     SetTargetFPS(60);
 
+    // FOOD
+    Food comida = Food();
+
     // =================================================
     // SNAKE (VECTOR DE COORDENADAS)
     // =================================================
@@ -62,7 +91,7 @@ int main()
     // =================================================
     // COMIDA
     // =================================================
-    CoordenadasComida comida = {4, 6};
+    // CoordenadasComida comida = {4, 6};
 
     // =================================================
     // ESTADO DEL JUEGO
@@ -111,10 +140,10 @@ int main()
             ultimoMovimiento = tiempoActual;
 
             // 3️⃣ COMER COMIDA
-            if (snake[0].x == comida.x && snake[0].y == comida.y)
+            if (snake[0].x == comida.position.x && snake[0].y == comida.position.y)
             {
-                comida.x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
-                comida.y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+                comida.position.x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+                comida.position.y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
 
                 // Crecer el snake
                 snake.push_back(snake.back());
@@ -132,30 +161,31 @@ int main()
         // DIBUJO
         // -------------------------------------------------
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(green);
 
         // Dibujar snake completo
         for (int i = 0; i < snake.size(); i++)
         {
-            DrawRectangle(
-                snake[i].x * TAMANO_CELDA,
-                snake[i].y * TAMANO_CELDA,
-                TAMANO_CELDA,
-                TAMANO_CELDA,
-                (i == 0) ? RED : GREEN
-            );
-        }
+                DrawRectangle(
+                        snake[i].x * TAMANO_CELDA,
+                        snake[i].y * TAMANO_CELDA,
+                        TAMANO_CELDA,
+                        TAMANO_CELDA,
+                        (i == 0) ? RED : GREEN
+                    );
+                }
+                
+                comida.Draw();
+        // // Dibujar comida
+        // DrawRectangle(
+        //     comida.x * TAMANO_CELDA,
+        //     comida.y * TAMANO_CELDA,
+        //     TAMANO_CELDA,
+        //     TAMANO_CELDA,
+        //     GREEN
+        // );
 
-        // Dibujar comida
-        DrawRectangle(
-            comida.x * TAMANO_CELDA,
-            comida.y * TAMANO_CELDA,
-            TAMANO_CELDA,
-            TAMANO_CELDA,
-            GREEN
-        );
-
-        EndDrawing();
+        EndDrawing(); 
     }
 
     CloseWindow();
