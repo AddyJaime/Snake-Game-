@@ -30,12 +30,6 @@ struct Coordenadas
     int y;
 };
 
-// struct CoordenadasComida
-// {
-//     int x;
-//     int y;
-// };
-
 // COLORS
 Color green = {173,204,96,255};
 Color dark_green = {43,51,24,255};
