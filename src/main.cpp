@@ -37,7 +37,7 @@ Color dark_green = {43,51,24,255};
 // Encapsular SÍ es: Decidir qué muestro y qué no”
 class Food {
     public:
-    Vector2 position = {5,6};
+    Vector2 position;
     // Texture2D viene de raylib porque c++ no sabe nada de imagen
     // Raylib es la que le enseña a C++ a dibujar cosas.
     // texture2d es una imagen que ya fue enviada a la GPU
@@ -50,6 +50,7 @@ class Food {
         // “Cópialo a la GPU para poder dibujarlo”
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
+        position = GenerateRandonPos();
     }
 
     ~Food(){
@@ -58,6 +59,14 @@ class Food {
     void Draw(){
        DrawTexture(texture, position.x *  TAMANO_CELDA, position.y *  TAMANO_CELDA, WHITE);
     };
+
+    Vector2 GenerateRandonPos(){
+        float x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+        float y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+        return Vector2{x, y};
+    }
+
+    
 };
 
 
@@ -175,14 +184,7 @@ int main()
                 }
                 
                 comida.Draw();
-        // // Dibujar comida
-        // DrawRectangle(
-        //     comida.x * TAMANO_CELDA,
-        //     comida.y * TAMANO_CELDA,
-        //     TAMANO_CELDA,
-        //     TAMANO_CELDA,
-        //     GREEN
-        // );
+
 
         EndDrawing(); 
     }
