@@ -37,7 +37,7 @@ Color dark_green = {43,51,24,255};
 // Encapsular SÍ es: Decidir qué muestro y qué no”
 class Food {
     public:
-    Vector2 position = {4,6};
+    Vector2 position = {5,6};
     // Texture2D viene de raylib porque c++ no sabe nada de imagen
     // Raylib es la que le enseña a C++ a dibujar cosas.
     // texture2d es una imagen que ya fue enviada a la GPU
@@ -46,13 +46,18 @@ class Food {
     // Constructor
     Food(){
         // “Abre el archivo y ponlo en RAM”
-        Image image = LoadImage("assets/16_burger_dish.png");
+        Image image = LoadImage("src/assets/16_burger_dish.png");
         // “Cópialo a la GPU para poder dibujarlo”
         texture = LoadTextureFromImage(image);
+        UnloadImage(image);
+    }
+
+    ~Food(){
+        UnloadTexture(texture);
     }
     void Draw(){
-        DrawRectangle(position.x * TAMANO_CELDA, position.y * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA, dark_green);
-    }
+       DrawTexture(texture, position.x *  TAMANO_CELDA, position.y *  TAMANO_CELDA, WHITE);
+    };
 };
 
 
