@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <vector>
 #include <iostream>
+#include <deque>
 
 using namespace std;
 
@@ -35,6 +36,24 @@ Color green = {173,204,96,255};
 Color dark_green = {43,51,24,255};
 // La  clase encapsula el acceso a sus miembros
 // Encapsular SÍ es: Decidir qué muestro y qué no”
+
+class Snake{
+    public:
+    deque<Vector2> body = {Vector2{10,10}, Vector2{9,10}, Vector2{8,10}};
+
+    void Draw()
+    {
+        for(int i = 0; i < body.size(); i++){
+            int x = body[i].x ;
+            int y = body[i].y ;
+            DrawRectangle(x * TAMANO_CELDA, y * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA, dark_green);
+
+        };
+    };
+
+};
+
+
 class Food {
     public:
     Vector2 position;
@@ -50,6 +69,8 @@ class Food {
         // “Cópialo a la GPU para poder dibujarlo”
         texture = LoadTextureFromImage(image);
         UnloadImage(image);
+
+        // esta funcion se esta llamando desde abajo para cambiar la posicon de la comida 
         position = GenerateRandonPos();
     }
 
@@ -85,16 +106,15 @@ int main()
 
     // FOOD
     Food comida = Food();
+    Snake snake = Snake();
 
     // =================================================
     // SNAKE (VECTOR DE COORDENADAS)
     // =================================================
-    vector<Coordenadas> snake;
+    // vector<Coordenadas> snake;
 
     // Snake inicial (3 partes)
-    snake.push_back({10, 10}); // cabeza
-    snake.push_back({9, 10});  // cuerpo
-    snake.push_back({8, 10});  // cola
+
 
     // =================================================
     // COMIDA
@@ -134,32 +154,32 @@ int main()
         if (tiempoActual - ultimoMovimiento >= delayMovimiento && !is_snake_out)
         {
             // 1️⃣ MOVER CUERPO (DE ATRÁS HACIA ADELANTE)
-            for (int i = snake.size() - 1; i > 0; i--)
+            for (int i = snake.body.size() - 1; i > 0; i--)
             {
-                snake[i] = snake[i - 1];
+                snake.body[i] = snake.body[i - 1];
             }
 
             // 2️⃣ MOVER CABEZA
-            if (direccion == RIGHT) snake[0].x += 1;
-            if (direccion == LEFT)  snake[0].x -= 1;
-            if (direccion == UP)    snake[0].y -= 1;
-            if (direccion == DOWN)  snake[0].y += 1;
+            if (direccion == RIGHT) snake.body[0].x += 1;
+            if (direccion == LEFT)  snake.body[0].x -= 1;
+            if (direccion == UP)    snake.body[0].y -= 1;
+            if (direccion == DOWN)  snake.body[0].y += 1;
 
             ultimoMovimiento = tiempoActual;
 
             // 3️⃣ COMER COMIDA
-            if (snake[0].x == comida.position.x && snake[0].y == comida.position.y)
+            if (snake.body[0].x == comida.position.x && snake.body[0].y == comida.position.y)
             {
                 comida.position.x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
                 comida.position.y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
 
                 // Crecer el snake
-                snake.push_back(snake.back());
+                snake.body.push_back(snake.body.back());
             }
 
             // 4️⃣ LÍMITES DEL MAPA
-            if (snake[0].x < 0 || snake[0].x >= CANTIDAD_CELDAS ||
-                snake[0].y < 0 || snake[0].y >= CANTIDAD_CELDAS)
+            if (snake.body[0].x < 0 || snake.body[0].x >= CANTIDAD_CELDAS ||
+                snake.body[0].y < 0 || snake.body[0].y >= CANTIDAD_CELDAS)
             {
                 is_snake_out = true;
             }
@@ -170,20 +190,8 @@ int main()
         // -------------------------------------------------
         BeginDrawing();
         ClearBackground(green);
-
-        // Dibujar snake completo
-        for (int i = 0; i < snake.size(); i++)
-        {
-                DrawRectangle(
-                        snake[i].x * TAMANO_CELDA,
-                        snake[i].y * TAMANO_CELDA,
-                        TAMANO_CELDA,
-                        TAMANO_CELDA,
-                        (i == 0) ? RED : GREEN
-                    );
-                }
-                
-                comida.Draw();
+        snake.Draw();
+         comida.Draw();
 
 
         EndDrawing(); 
