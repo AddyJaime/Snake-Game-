@@ -39,14 +39,17 @@ Color dark_green = {43,51,24,255};
 
 class Snake{
     public:
-    deque<Vector2> body = {Vector2{10,10}, Vector2{9,10}, Vector2{8,10}};
+ // deque (double-ended queue): es una estructura de datos que permite insertar y eliminar elementos por delante y por detrás.
+   deque<Vector2> body = {Vector2{10,10}, Vector2{9,10}, Vector2{8,10}};
 
     void Draw()
     {
         for(int i = 0; i < body.size(); i++){
             int x = body[i].x ;
             int y = body[i].y ;
-            DrawRectangle(x * TAMANO_CELDA, y * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA, dark_green);
+            Rectangle segment = Rectangle{(float)(x *TAMANO_CELDA),(float)( y *TAMANO_CELDA),(float) (TAMANO_CELDA), (TAMANO_CELDA) };
+            DrawRectangleRounded(segment,0.5, 6, dark_green);
+            // DrawRectangle(x * TAMANO_CELDA, y * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA, dark_green);
 
         };
     };
