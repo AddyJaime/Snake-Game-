@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <deque>
+#include <raymath.h>
 
 using namespace std;
 
@@ -11,25 +12,21 @@ using namespace std;
 const int TAMANO_CELDA = 25;
 const int CANTIDAD_CELDAS = 30;
 
-// =================================================
-// DIRECCIÓN DEL SNAKE
-// =================================================
-enum Direccion
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-};
+double last_update_time = 0;
 
-// =================================================
-// ESTRUCTURAS
-// =================================================
-struct Coordenadas
+// we want to see if some interval has passed so we will return a boolean value
+bool eventTriggered(double interval)
 {
-    int x;
-    int y;
-};
+ double current_time = GetTime();
+ if (current_time - last_update_time >= interval)
+ {
+    last_update_time = current_time;
+    return true;
+ }
+   return false;
+ 
+}
+
 
 // COLORS
 Color green = {173,204,96,255};
@@ -41,21 +38,31 @@ class Snake{
     public:
  // deque (double-ended queue): es una estructura de datos que permite insertar y eliminar elementos por delante y por detrás.
    deque<Vector2> body = {Vector2{10,10}, Vector2{9,10}, Vector2{8,10}};
+   Vector2 direccion = {1,0};
 
     void Draw()
     {
         for(int i = 0; i < body.size(); i++){
-            int x = body[i].x ;
-            int y = body[i].y ;
-            Rectangle segment = Rectangle{(float)(x *TAMANO_CELDA),(float)( y *TAMANO_CELDA),(float) (TAMANO_CELDA), (TAMANO_CELDA) };
+            float x = body[i].x ;
+            float y = body[i].y ;
+            Rectangle segment = Rectangle{x *TAMANO_CELDA, y *TAMANO_CELDA,TAMANO_CELDA, TAMANO_CELDA };
             DrawRectangleRounded(segment,0.5, 6, dark_green);
-            // DrawRectangle(x * TAMANO_CELDA, y * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA, dark_green);
 
         };
     };
+    // aqui se va a lograr el movimiento de la serpiente, quitando y metiendo 
+    void Update()
+    {
+        body.pop_back();
+        // direccion Es hacia dónde te mueves
+            // body[0] Es la posición ACTUAL de la cabeza
+            // Vector2Add(a, b) Suma dos posiciones
+            // El snake se mueve quitando la cola y agregando una nueva cabeza adelante.
+            // this will move the snake's head in the direcion specified by the direction attribute
+            body.push_front(Vector2Add(body[0], direccion));
+    }
 
 };
-
 
 class Food {
     public:
@@ -93,12 +100,27 @@ class Food {
     
 };
 
+class Game {
+    public:
+        Food comida = Food();
+        Snake snake = Snake();
+
+        void Draw()
+        {
+            comida.Draw();
+            snake.Draw();
+        }
+
+        void Update()
+        {
+            snake.Update();
+        }
+
+
+};
 
 int main()
 {
-    // =================================================
-    // VENTANA
-    // =================================================
     InitWindow(
         TAMANO_CELDA * CANTIDAD_CELDAS,
         TAMANO_CELDA * CANTIDAD_CELDAS,
@@ -107,34 +129,8 @@ int main()
 
     SetTargetFPS(60);
 
-    // FOOD
-    Food comida = Food();
-    Snake snake = Snake();
+    Game game = Game();
 
-    // =================================================
-    // SNAKE (VECTOR DE COORDENADAS)
-    // =================================================
-    // vector<Coordenadas> snake;
-
-    // Snake inicial (3 partes)
-
-
-    // =================================================
-    // COMIDA
-    // =================================================
-    // CoordenadasComida comida = {4, 6};
-
-    // =================================================
-    // ESTADO DEL JUEGO
-    // =================================================
-    Direccion direccion = RIGHT;
-    bool is_snake_out = false;
-
-    // =================================================
-    // CONTROL DE TIEMPO
-    // =================================================
-    double ultimoMovimiento = GetTime();
-    double delayMovimiento = 0.3;
 
     // =================================================
     // GAME LOOP
@@ -144,60 +140,64 @@ int main()
         // -------------------------------------------------
         // INPUT (CAMBIO DE DIRECCIÓN)
         // -------------------------------------------------
-        if (IsKeyPressed(KEY_RIGHT) && direccion != LEFT)  direccion = RIGHT;
-        if (IsKeyPressed(KEY_LEFT)  && direccion != RIGHT) direccion = LEFT;
-        if (IsKeyPressed(KEY_UP)    && direccion != DOWN)  direccion = UP;
-        if (IsKeyPressed(KEY_DOWN)  && direccion != UP)    direccion = DOWN;
-
-        // -------------------------------------------------
-        // MOVIMIENTO CONTROLADO POR TIEMPO
-        // -------------------------------------------------
-        double tiempoActual = GetTime();
-
-        if (tiempoActual - ultimoMovimiento >= delayMovimiento && !is_snake_out)
+        // si la direccion actual no es hacia abajo entonce puede subir
+        if (IsKeyPressed(KEY_UP) && game.snake.direccion.y != 1)
         {
-            // 1️⃣ MOVER CUERPO (DE ATRÁS HACIA ADELANTE)
-            for (int i = snake.body.size() - 1; i > 0; i--)
-            {
-                snake.body[i] = snake.body[i - 1];
-            }
-
-            // 2️⃣ MOVER CABEZA
-            if (direccion == RIGHT) snake.body[0].x += 1;
-            if (direccion == LEFT)  snake.body[0].x -= 1;
-            if (direccion == UP)    snake.body[0].y -= 1;
-            if (direccion == DOWN)  snake.body[0].y += 1;
-
-            ultimoMovimiento = tiempoActual;
+            // sube
+            game.snake.direccion = {0,-1};
+        }
+        // si la direccion actual no es hacia arriba entonce puede bajar
+        if(IsKeyPressed(KEY_DOWN) && game.snake.direccion.y != -1)
+        {
+            game.snake.direccion = {0, 1};
+        }
+// Si se presiona la tecla izquierda y la dirección actual NO es hacia la derecha
+        if(IsKeyPressed(KEY_LEFT) && game.snake.direccion.x != 1)
+        {
+            // mover hacia la izquierda
+            game.snake.direccion = {-1, 0};
+        }
+// si se presiona la tecla derecha y la direccion actual NO es hacia la derecha
+        if (IsKeyPressed(KEY_RIGHT) && game.snake.direccion.x != -1)
+        {
+            // mover hacia la derecha
+            game.snake.direccion = {1, 0};
+        }
+        
 
             // 3️⃣ COMER COMIDA
-            if (snake.body[0].x == comida.position.x && snake.body[0].y == comida.position.y)
-            {
-                comida.position.x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
-                comida.position.y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+            //     if (snake.body[0].x == comida.position.x && snake.body[0].y == comida.position.y)
+            //     {
+            //         comida.position.x = GetRandomValue(0, CANTIDAD_CELDAS - 1);
+            //         comida.position.y = GetRandomValue(0, CANTIDAD_CELDAS - 1);
 
-                // Crecer el snake
-                snake.body.push_back(snake.body.back());
-            }
+                
+            //     }
+                    
+            // // 4️⃣ LÍMITES DEL MAPA
+            // if (snake.body[0].x < 0 || snake.body[0].x >= CANTIDAD_CELDAS ||
+            //     snake.body[0].y < 0 || snake.body[0].y >= CANTIDAD_CELDAS)
+            // {
+            //     is_snake_out = true;
+            // }
 
-            // 4️⃣ LÍMITES DEL MAPA
-            if (snake.body[0].x < 0 || snake.body[0].x >= CANTIDAD_CELDAS ||
-                snake.body[0].y < 0 || snake.body[0].y >= CANTIDAD_CELDAS)
-            {
-                is_snake_out = true;
-            }
-        }
 
         // -------------------------------------------------
         // DIBUJO
         // -------------------------------------------------
         BeginDrawing();
+
+        if(eventTriggered(0.3)){
+           game.snake.Update();
+        }
+
+
         ClearBackground(green);
-        snake.Draw();
-         comida.Draw();
+        game.snake.Draw();
+         game.comida.Draw();
 
 
-        EndDrawing(); 
+        EndDrawing();
     }
 
     CloseWindow();
