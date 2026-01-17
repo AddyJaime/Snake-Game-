@@ -14,13 +14,15 @@ const int CANTIDAD_CELDAS = 30;
 
 double last_update_time = 0;
 
-// we want to see if some interval has passed so we will return a boolean value
+// NO PUEDO MOVER EL SNAKE TODO EL TIEMPO, SOLO PUEDO MOVERLO CADA CIERTO TIEMPO
+// ESTA FUNCION SE ENCARGA DE ESO 
 bool eventTriggered(double interval)
 {
  double current_time = GetTime();
  if (current_time - last_update_time >= interval)
  {
     last_update_time = current_time;
+    
     return true;
  }
    return false;
@@ -94,7 +96,7 @@ class Snake{
 
     void Reset()
     {
-        body = {Vector2{6,9}, Vector2{5,9}, Vector2{4,9}};
+        body = {Vector2{6,10}, Vector2{5,10}, Vector2{4,10}};
         direccion = {1,0};
     }
 
@@ -154,9 +156,9 @@ class Game {
         {
             if (running)
             {
-                snake.Update();
                 CheckCollisionWithFood();
                 CheckCollisionWithEdge();   
+                snake.Update();
             }
         }
 
@@ -217,58 +219,77 @@ int main()
     // =================================================
     while (!WindowShouldClose())
     {
-        // -------------------------------------------------
-        // INPUT (CAMBIO DE DIRECCIÓN)
-        // -------------------------------------------------
-        // si la direccion actual no es hacia abajo entonce puede subir
-        if (IsKeyPressed(KEY_UP) && game.snake.direccion.y != 1)
-        {
-            // sube
-            game.snake.direccion = {0,-1};
-        }
-        // si la direccion actual no es hacia arriba entonce puede bajar
-        if(IsKeyPressed(KEY_DOWN) && game.snake.direccion.y != -1)
-        {
-            game.snake.direccion = {0, 1};
-        }
-// Si se presiona la tecla izquierda y la dirección actual NO es hacia la derecha
-        if(IsKeyPressed(KEY_LEFT) && game.snake.direccion.x != 1)
-        {
-            // mover hacia la izquierda
-            game.snake.direccion = {-1, 0};
-        }
-// si se presiona la tecla derecha y la direccion actual NO es hacia la derecha
-        if (IsKeyPressed(KEY_RIGHT) && game.snake.direccion.x != -1)
-        {
-            // mover hacia la derecha
-            game.snake.direccion = {1, 0};
-        }
+
+        //cuando el juego este detenido 
+        // el jugador puede presiona la tecla R para empezar de nuevo
+        if(!game.running){
+             if (IsKeyPressed(KEY_R))
+             {
+                game.snake.Reset();
+                game.running  = true;
+                last_update_time = GetTime();
+             }
+             
+
+
+        } 
         
+        // SI EL JUEGO SI ESTA CORRIENDO, ENTONCES ESCUCHA LAS TECLAS NORMALES PARA MOVER LA SERPIENTE
+        
+        else {
+            // -------------------------------------------------
+            // INPUT (CAMBIO DE DIRECCIÓN)
+            // -------------------------------------------------
+            // si la direccion actual no es hacia abajo entonce puede subir
+            if (IsKeyPressed(KEY_UP) && game.snake.direccion.y != 1)
+            {
+                // sube
+                game.snake.direccion = {0,-1};
+            }
+            // si la direccion actual no es hacia arriba entonce puede bajar
+            if(IsKeyPressed(KEY_DOWN) && game.snake.direccion.y != -1)
+            {
+                game.snake.direccion = {0, 1};
+            }
+    // Si se presiona la tecla izquierda y la dirección actual NO es hacia la derecha
+            if(IsKeyPressed(KEY_LEFT) && game.snake.direccion.x != 1)
+            {
+                // mover hacia la izquierda
+                game.snake.direccion = {-1, 0};
+            }
+    // si se presiona la tecla derecha y la direccion actual NO es hacia la derecha
+            if (IsKeyPressed(KEY_RIGHT) && game.snake.direccion.x != -1)
+            {
+                // mover hacia la derecha
+                game.snake.direccion = {1, 0};
+            }
+            
 
-    
-                    
-            // // 4️⃣ LÍMITES DEL MAPA
-            // if (snake.body[0].x < 0 || snake.body[0].x >= CANTIDAD_CELDAS ||
-            //     snake.body[0].y < 0 || snake.body[0].y >= CANTIDAD_CELDAS)
-            // {
-            //     is_snake_out = true;
-            // }
 
+
+        }
+     
 
         // -------------------------------------------------
         // DIBUJO
         // -------------------------------------------------
         BeginDrawing();
 
-        if(eventTriggered(0.3)){
-           game.snake.Update();
-           game.CheckCollisionWithFood();
+        if(eventTriggered(0.3) && game.running){
+           game.Update();
+
         }
 
 
         ClearBackground(green);
         game.snake.Draw();
          game.comida.Draw();
+
+          if (!game.running)
+    {
+        int textWidth = MeasureText("GAME OVER - Press R to Restart", 30);
+        DrawText("GAME OVER - Press R to Restart", (GetScreenWidth() - textWidth)/2 , 200, 30, RED);
+    }
 
 
         EndDrawing();
