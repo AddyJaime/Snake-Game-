@@ -41,6 +41,55 @@ class Snake{
  // deque (double-ended queue): es una estructura de datos que permite insertar y eliminar elementos por delante y por detrás.
    deque<Vector2> body = {Vector2{10,10}, Vector2{9,10}, Vector2{8,10}};
 
+
+
+
+
+   Texture2D headUp;
+   Texture2D headDown;
+   Texture2D headLeft;
+   Texture2D headRight;
+
+  
+  Snake()
+  {
+    // Lee el archivo del disco Lo guarda en la RAM NO se dibuja todavía
+      Image imgUp =  LoadImage("src/assets/milo-up.png");
+      Image imgDown =  LoadImage("src/assets/milo-down.png");
+    Image imgLeft =  LoadImage("src/assets/mio-left.png");
+    Image imgRight =  LoadImage("src/assets/milo-right.png");
+
+// Copia la imagen a la GPU .La convierte en textura. YA se puede dibujar
+// 🎮 Ahora la GPU puede usarlaz
+   headUp = LoadTextureFromImage(imgUp);
+   headDown = LoadTextureFromImage(imgDown);
+   headLeft = LoadTextureFromImage(imgLeft);
+   headRight = LoadTextureFromImage(imgRight);
+
+//    Ya no la necesitamos La GPU ya tiene su copia
+// Liberamos memoria (MUY importante)
+// 🧹 Limpieza
+
+   UnloadImage(imgUp);
+   UnloadImage(imgDown);
+   UnloadImage(imgLeft);
+   UnloadImage(imgRight);
+  }
+
+  ~Snake()
+  {
+    // Le decimos a la GPU:
+// “Ya no necesito esta textura, bórrala”
+// Si NO lo haces: La GPU se llena El juego consume más memoria
+// Bugs
+// Crashes
+// Malas prácticas
+    UnloadTexture(headUp);
+    UnloadTexture(headDown);
+    UnloadTexture(headLeft);
+    UnloadTexture(headRight);
+  }
+
 //    posicion inicial mueve hacia la derecha
 // {1,0}derecha
 // {-1,0}izquierda
@@ -57,10 +106,33 @@ class Snake{
 
     {
         for(int i = 0; i < body.size(); i++){
-            float x = body[i].x ;
-            float y = body[i].y ;
-            Rectangle segment = Rectangle{x *TAMANO_CELDA, y *TAMANO_CELDA,TAMANO_CELDA, TAMANO_CELDA };
-            DrawRectangleRounded(segment,0.5, 6, dark_green);
+            if (i == 0)
+            {
+            Texture2D head = headRight; //DEFAULT
+            
+            if (direccion.x == -1) head = headLeft;
+            if (direccion.y == -1) head = headUp;
+            if (direccion.y == 1) head = headDown;
+
+            DrawTexture(
+                head,
+                body[i].x * TAMANO_CELDA,
+                body[i].y * TAMANO_CELDA,
+                WHITE
+
+            );
+            
+           
+            } else {
+
+                float x = body[i].x  ;
+                float y = body[i].y ;
+                Rectangle segment = Rectangle{x *TAMANO_CELDA, y *TAMANO_CELDA,TAMANO_CELDA, TAMANO_CELDA };
+                DrawRectangleRounded(segment,0.5, 6, dark_green);
+
+            }
+            
+
 
         };
     };
@@ -227,7 +299,7 @@ int main()
     InitWindow(
         TAMANO_CELDA * CANTIDAD_CELDAS,
         TAMANO_CELDA * CANTIDAD_CELDAS,
-        "Snake Game"
+        "Milo Game"
     );
 
     SetTargetFPS(60);
