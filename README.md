@@ -1,12 +1,13 @@
 # Snake Game 🐍
 
-![Gameplay screenshot](./Snake_Game.png)
+![Gameplay screenshot](./snake.png)
 
-Small Snake-style game project written in C++ using Raylib.
+A classic Snake game built in C++ using the Raylib graphics library.
+This project focuses on clean game logic, object-oriented design, and time-based movement instead of frame-dependent updates.
 
 ## Description
 
-This is a simple project to experiment with Raylib and basic game logic. The generated executable is named `app` and the main source file is `src/main.cpp`.
+This is a project to experiment with Raylib. The generated executable is named `app` and the main source file is `src/main.cpp`.
 
 ⚙️ Compiler: `clang++` (this project uses `clang++` on macOS).
 

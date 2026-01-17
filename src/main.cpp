@@ -143,6 +143,7 @@ class Game {
         Food comida = Food();
         Snake snake = Snake();
         bool running = true;
+        int score = 0;
         
 
 
@@ -158,6 +159,7 @@ class Game {
             {
                 CheckCollisionWithFood();
                 CheckCollisionWithEdge();   
+                CheckCollisionWithTail();
                 snake.Update();
             }
         }
@@ -169,8 +171,8 @@ class Game {
                 comida.position = comida.GenerateRandonPos();
                 // En el próximo movimiento, crecer, es solo una nota
                 // aqui decetamos la colision para poder agregar un segment 
-                snake.addSegment = true;
-                
+                snake.addSegment = true;     
+                score += 1;           
             }
         }
         
@@ -178,10 +180,8 @@ class Game {
         {
           
             if (snake.body[0].x == CANTIDAD_CELDAS || snake.body[0].x == -1)
-            {
-             
-                GameOver();
-               
+            { 
+                GameOver();     
             }
 
             if (snake.body[0].y == CANTIDAD_CELDAS || snake.body[0].y == -1)
@@ -196,8 +196,29 @@ class Game {
         {
            snake.Reset();
            running = false;
-         
+           ResetScore();
         }
+
+        void ResetScore()
+        {
+            score = 0;
+        }
+
+        void  CheckCollisionWithTail()
+        {
+            for (int i = 1; i < snake.body.size(); i++)
+            {
+                
+                if (Vector2Equals(snake.body[0], snake.body[i]))
+                {
+                    GameOver();
+                    return; 
+                }
+            
+            }
+            
+        }
+
 
 };
 
@@ -263,9 +284,7 @@ int main()
                 // mover hacia la derecha
                 game.snake.direccion = {1, 0};
             }
-            
-
-
+        
 
         }
      
@@ -290,6 +309,12 @@ int main()
         int textWidth = MeasureText("GAME OVER - Press R to Restart", 30);
         DrawText("GAME OVER - Press R to Restart", (GetScreenWidth() - textWidth)/2 , 200, 30, RED);
     }
+    
+     string text = "Score: " + to_string(game.score);
+    //  c_str convierte el texto a lo que drawText entiende 
+        DrawText(text.c_str(), 10, 10, 30,  DARKGRAY);
+        
+    
 
 
         EndDrawing();
